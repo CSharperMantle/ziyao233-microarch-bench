@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define S_TO_NS(x)	((x) * 1000 * 1000 * 1000)
-#define NS_TO_S(x)	(((x) + .0) / 1000 / 1000 / 1000)
-#define _DO_PRAGMA(x)	_Pragma(#x)
-#define DO_PRAGMA(x)	_DO_PRAGMA(x)
+#define S_TO_NS(x)    ((x) * 1000 * 1000 * 1000)
+#define NS_TO_S(x)    (((x) + .0) / 1000 / 1000 / 1000)
+#define _DO_PRAGMA(x) _Pragma(#x)
+#define DO_PRAGMA(x)  _DO_PRAGMA(x)
 
 unsigned long batches, frequency, warmupBatches;
 
@@ -29,22 +29,23 @@ item_end(const char *name, struct timespec *ts1)
 
 	unsigned long instructions = BATCHSIZE * batches;
 	double cycles = frequency * NS_TO_S(ns);
-	printf("%s: IPC/CPI = %.2f/%.2f\n", name,
-	       instructions / cycles, cycles / instructions);
+	printf("%s: IPC/CPI = %.2f/%.2f\n", name, instructions / cycles,
+	       cycles / instructions);
 }
 
-#define dotest(name, func, ...) do { \
-	for (unsigned long int i = 0; i < warmupBatches; i++)		\
-		func(__VA_ARGS__);					\
-									\
-	struct timespec ts;						\
-	item_begin(&ts);						\
-									\
-	for (unsigned long int i = 0; i < batches; i++)			\
-		func(__VA_ARGS__);					\
-									\
-	item_end(name, &ts);						\
-} while (0)
+#define dotest(name, func, ...)                                                \
+	do {                                                                   \
+		for (unsigned long int i = 0; i < warmupBatches; i++)          \
+			func(__VA_ARGS__);                                     \
+                                                                               \
+		struct timespec ts;                                            \
+		item_begin(&ts);                                               \
+                                                                               \
+		for (unsigned long int i = 0; i < batches; i++)                \
+			func(__VA_ARGS__);                                     \
+                                                                               \
+		item_end(name, &ts);                                           \
+	} while (0)
 
 void latency_add_d(void);
 void latency_add_w(void);
@@ -128,8 +129,7 @@ int
 main(int argc, const char *argv[])
 {
 	if (argc != 4) {
-		fprintf(stderr,
-			"Usage: %s <BATCHES> <FREQ> <WARMUP-BATCHES>\n",
+		fprintf(stderr, "Usage: %s <BATCHES> <FREQ> <WARMUP-BATCHES>\n",
 			argv[0]);
 		return 0;
 	}
@@ -226,10 +226,10 @@ main(int argc, const char *argv[])
 	dotest("bstrpick.d (47, 16) throughput", thrput_bstrpick_d_47_16);
 	dotest("bstrpick.w (15, 0) throughput", thrput_bstrpick_w_15_0);
 	dotest("bstrpick.w (23, 8) throughput", thrput_bstrpick_w_23_8);
-	dotest("maskeqz masked/untaken throughput", thrput_maskeqz,
-	       0, 0, 0, 0, 0, 0, 0, 0);
-	dotest("maskeqz unmasked/taken throughput", thrput_maskeqz,
-	       1, 1, 1, 1, 1, 1, 1, 1);
+	dotest("maskeqz masked/untaken throughput", thrput_maskeqz, 0, 0, 0, 0,
+	       0, 0, 0, 0);
+	dotest("maskeqz unmasked/taken throughput", thrput_maskeqz, 1, 1, 1, 1,
+	       1, 1, 1, 1);
 	dotest("crc.w.b.w throughput", thrput_crc_wbw);
 	dotest("crc.w.h.w throughput", thrput_crc_whw);
 	dotest("crc.w.w.w throughput", thrput_crc_www);
@@ -240,8 +240,8 @@ main(int argc, const char *argv[])
 
 		for (long divisor = 1; divisor < dividend * 16; divisor *= 3) {
 			char msg[256];
-			snprintf(msg, 256, "div.d %ld %ld throughput",
-				 dividend, divisor);
+			snprintf(msg, 256, "div.d %ld %ld throughput", dividend,
+				 divisor);
 
 			dotest(msg, thrput_div_d, dividend, divisor);
 		}
