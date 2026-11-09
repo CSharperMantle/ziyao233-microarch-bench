@@ -294,6 +294,60 @@ void thrput_czero_eqz(unsigned long a);
 void thrput_czero_nez(unsigned long a);
 void thrput_div(void);
 void thrput_divu(void);
+
+void seq_lat_32_3_zba(void);
+void seq_lat_32_5_zba(void);
+void seq_lat_32_9_zba(void);
+void seq_lat_32_6_zba(void);
+void seq_lat_64_6_zba(void);
+void seq_lat_64_li_long(void);
+void seq_lat_32_3(void);
+void seq_lat_32_5(void);
+void seq_lat_32_9(void);
+void seq_lat_32_7(void);
+void seq_lat_32_17(void);
+void seq_lat_32_33(void);
+void seq_lat_32_6(void);
+void seq_lat_64_3(void);
+void seq_lat_64_5(void);
+void seq_lat_64_9(void);
+void seq_lat_64_7(void);
+void seq_lat_64_17(void);
+void seq_lat_64_33(void);
+void seq_lat_64_6(void);
+void seq_lat_32_ovf7(void);
+void seq_lat_32_li_addi(void);
+void seq_lat_32_li_lui(void);
+void seq_lat_32_li_lui_addiw(void);
+void seq_lat_64_li_bseti(void);
+void seq_lat_64_li_addi_slli(void);
+void seq_lat_64_li_lui_addiw(void);
+
+void seq_thr_32_3_zba(void);
+void seq_thr_32_5_zba(void);
+void seq_thr_32_9_zba(void);
+void seq_thr_32_6_zba(void);
+void seq_thr_64_6_zba(void);
+void seq_thr_32_3(void);
+void seq_thr_32_5(void);
+void seq_thr_32_9(void);
+void seq_thr_32_7(void);
+void seq_thr_32_17(void);
+void seq_thr_32_33(void);
+void seq_thr_32_6(void);
+void seq_thr_64_3(void);
+void seq_thr_64_5(void);
+void seq_thr_64_9(void);
+void seq_thr_64_7(void);
+void seq_thr_64_17(void);
+void seq_thr_64_33(void);
+void seq_thr_64_6(void);
+void seq_thr_32_li_addi(void);
+void seq_thr_32_li_lui(void);
+void seq_thr_32_li_lui_addiw(void);
+void seq_thr_64_li_bseti(void);
+void seq_thr_64_li_addi_slli(void);
+void seq_thr_64_li_lui_addiw(void);
 #endif
 
 int
@@ -567,6 +621,77 @@ main(int argc, const char *argv[])
 		 1);
 	dotest("div throughput", thrput_div);
 	dotest("divu throughput", thrput_divu);
+
+	/*
+	 * For the sequence tests below, CPI reads cycles per multiply,
+	 * not per executed instruction.
+	 */
+	TEST_EXT(have_zba, "mul32 3 (sh1add+sext.w) latency", seq_lat_32_3_zba);
+	TEST_EXT(have_zba, "mul32 5 (sh2add+sext.w) latency", seq_lat_32_5_zba);
+	TEST_EXT(have_zba, "mul32 9 (sh3add+sext.w) latency", seq_lat_32_9_zba);
+	TEST_EXT(have_zba, "mul32 6 (sh1add+slliw) latency", seq_lat_32_6_zba);
+	TEST_EXT(have_zba, "mul64 6 (sh1add+slli) latency", seq_lat_64_6_zba);
+	TEST_EXT(have_zba, "mul64 fallback long-li+mul latency",
+		 seq_lat_64_li_long);
+	dotest("mul32 3 (slliw+subw) latency", seq_lat_32_3);
+	dotest("mul32 5 (slliw+addw) latency", seq_lat_32_5);
+	dotest("mul32 9 (slliw+addw) latency", seq_lat_32_9);
+	dotest("mul32 7 (slliw+subw) latency", seq_lat_32_7);
+	dotest("mul32 17 (slliw+addw) latency", seq_lat_32_17);
+	dotest("mul32 33 (slliw+addw) latency", seq_lat_32_33);
+	dotest("mul32 6 (slliw+addw+slliw) latency", seq_lat_32_6);
+	dotest("mul64 3 (slli+sub) latency", seq_lat_64_3);
+	dotest("mul64 5 (slli+add) latency", seq_lat_64_5);
+	dotest("mul64 9 (slli+add) latency", seq_lat_64_9);
+	dotest("mul64 7 (slli+sub) latency", seq_lat_64_7);
+	dotest("mul64 17 (slli+add) latency", seq_lat_64_17);
+	dotest("mul64 33 (slli+add) latency", seq_lat_64_33);
+	dotest("mul64 6 (slli+add+slli) latency", seq_lat_64_6);
+	dotest("mul32 ovf 7 (+sext.w) latency", seq_lat_32_ovf7);
+	dotest("mul32 fallback addi+mulw latency", seq_lat_32_li_addi);
+	dotest("mul32 fallback lui+mulw latency", seq_lat_32_li_lui);
+	dotest("mul32 fallback lui+addiw+mulw latency",
+	       seq_lat_32_li_lui_addiw);
+	TEST_EXT(have_zbs, "mul64 fallback bseti+mul latency",
+		 seq_lat_64_li_bseti);
+	dotest("mul64 fallback li+slli+mul latency", seq_lat_64_li_addi_slli);
+	dotest("mul64 fallback lui+addiw+mul latency", seq_lat_64_li_lui_addiw);
+
+	TEST_EXT(have_zba, "mul32 3 (sh1add+sext.w) throughput",
+		 seq_thr_32_3_zba);
+	TEST_EXT(have_zba, "mul32 5 (sh2add+sext.w) throughput",
+		 seq_thr_32_5_zba);
+	TEST_EXT(have_zba, "mul32 9 (sh3add+sext.w) throughput",
+		 seq_thr_32_9_zba);
+	TEST_EXT(have_zba, "mul32 6 (sh1add+slliw) throughput",
+		 seq_thr_32_6_zba);
+	TEST_EXT(have_zba, "mul64 6 (sh1add+slli) throughput",
+		 seq_thr_64_6_zba);
+	dotest("mul32 3 (slliw+subw) throughput", seq_thr_32_3);
+	dotest("mul32 5 (slliw+addw) throughput", seq_thr_32_5);
+	dotest("mul32 9 (slliw+addw) throughput", seq_thr_32_9);
+	dotest("mul32 7 (slliw+subw) throughput", seq_thr_32_7);
+	dotest("mul32 17 (slliw+addw) throughput", seq_thr_32_17);
+	dotest("mul32 33 (slliw+addw) throughput", seq_thr_32_33);
+	dotest("mul32 6 (slliw+addw+slliw) throughput", seq_thr_32_6);
+	dotest("mul64 3 (slli+sub) throughput", seq_thr_64_3);
+	dotest("mul64 5 (slli+add) throughput", seq_thr_64_5);
+	dotest("mul64 9 (slli+add) throughput", seq_thr_64_9);
+	dotest("mul64 7 (slli+sub) throughput", seq_thr_64_7);
+	dotest("mul64 17 (slli+add) throughput", seq_thr_64_17);
+	dotest("mul64 33 (slli+add) throughput", seq_thr_64_33);
+	dotest("mul64 6 (slli+add+slli) throughput", seq_thr_64_6);
+	dotest("mul32 fallback addi+mulw throughput", seq_thr_32_li_addi);
+	dotest("mul32 fallback lui+mulw throughput", seq_thr_32_li_lui);
+	dotest("mul32 fallback lui+addiw+mulw throughput",
+	       seq_thr_32_li_lui_addiw);
+	TEST_EXT(have_zbs, "mul64 fallback bseti+mul throughput",
+		 seq_thr_64_li_bseti);
+	dotest("mul64 fallback li+slli+mul throughput",
+	       seq_thr_64_li_addi_slli);
+	dotest("mul64 fallback lui+addiw+mul throughput",
+	       seq_thr_64_li_lui_addiw);
+
 	dotest("nop throughput", thrput_nop);
 #endif
 
